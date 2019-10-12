@@ -36,7 +36,7 @@ router.post(
   "/new",
   asyncHandler(async (req, res) => {
     const book = await Book.create(req.body);
-    res.redirect("/books", { book, title: "Entry Book" });
+    res.redirect("/books");
   })
 );
 
@@ -51,7 +51,7 @@ router.get(
 
 /* Edit book form. */
 router.get(
-  "/:id/",
+  "/:id/edit",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
     res.render("books-details", { book, title: "Edit book" });
@@ -60,11 +60,11 @@ router.get(
 
 /* Update an book. */
 router.post(
-  "/:id/",
+  "/:id/edit",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
     await book.update(req.body);
-    res.redirect("/books/");
+    res.redirect("/books");
   })
 );
 
@@ -79,10 +79,10 @@ router.get(
 
 /* Delete individual book. */
 router.post(
-  "/:id/",
+  "/:id/delete",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
-    await book.destory();
+    await book.destroy();
     res.redirect("/books");
   })
 );
