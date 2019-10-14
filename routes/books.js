@@ -62,7 +62,7 @@ router.get(
     if (book) {
       res.render("book-details", { book, title: book.title });
     } else {
-      res.sendStatus(404);
+      res.render("page_not_found");
     }
   })
 );
@@ -75,7 +75,7 @@ router.get(
     if (article) {
       res.render("books-details", { book, title: "Edit book" });
     } else {
-      res.sendStatus(404);
+      res.render("page_not_found");
     }
   })
 );
@@ -91,7 +91,7 @@ router.post(
         await book.update(req.body);
         res.redirect("/books");
       } else {
-        res.sendStatus(404);
+        res.render("page_not_found");
       }
     } catch (error) {
       if (error.name === "SequelizeValidationError") {
@@ -121,7 +121,7 @@ router.post(
       await book.destroy();
       res.redirect("/books");
     } else {
-      res.sendStatus(404);
+      res.render("page_not_found");
     }
   })
 );
