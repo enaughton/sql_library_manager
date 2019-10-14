@@ -17,7 +17,7 @@ module.exports = sequelize => {
         type: Sequelize.STRING,
         validate: {
           notEmpty: {
-            msg: '"Title" is required'
+            msg: '"Author is required'
           }
         }
       },

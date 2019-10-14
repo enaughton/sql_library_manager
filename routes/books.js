@@ -35,8 +35,22 @@ router.get("/new", (req, res) => {
 router.post(
   "/new",
   asyncHandler(async (req, res) => {
-    const book = await Book.create(req.body);
-    res.redirect("/books");
+    let book;
+    try {
+      book = await Book.create(req.body);
+      res.redirect("/books");
+    } catch (error) {
+      if (error.name === "SequelizeValidationError") {
+        book = await Book.build(req.body);
+        res.render("new-book", {
+          book,
+          errors: error.errors,
+          title: "New Book"
+        });
+      } else {
+        throw error;
+      }
+    }
   })
 );
 
@@ -45,7 +59,11 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
-    res.render("book-details", { book, title: book.title });
+    if (book) {
+      res.render("book-details", { book, title: book.title });
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 
@@ -54,7 +72,11 @@ router.get(
   "/:id/edit",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
-    res.render("books-details", { book, title: "Edit book" });
+    if (article) {
+      res.render("books-details", { book, title: "Edit book" });
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 
@@ -62,9 +84,22 @@ router.get(
 router.post(
   "/:id/edit",
   asyncHandler(async (req, res) => {
-    const book = await Book.findByPk(req.params.id);
-    await book.update(req.body);
-    res.redirect("/books");
+    let book;
+    try {
+      book = await Book.findByPk(req.params.id);
+      if (book) {
+        await book.update(req.body);
+        res.redirect("/books");
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (error) {
+      if (error.name === "SequelizeValidationError") {
+        book = await Book.build(req.body);
+        book.id = req.params.id;
+        res.render("book-details", { book, errors: error.errors });
+      }
+    }
   })
 );
 
@@ -82,8 +117,12 @@ router.post(
   "/:id/delete",
   asyncHandler(async (req, res) => {
     const book = await Book.findByPk(req.params.id);
-    await book.destroy();
-    res.redirect("/books");
+    if (book) {
+      await book.destroy();
+      res.redirect("/books");
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 

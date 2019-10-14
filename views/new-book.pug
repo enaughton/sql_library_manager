@@ -3,6 +3,9 @@ extends layout.pug
 block content
     h1 New Book
     form(method='post' action="/books/new")
+        if errors
+            h2(class="error") Please add a Title or Author
+        
         p
             label(for='title') Title
             input#title(name='title' type='text')
